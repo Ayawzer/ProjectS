@@ -48,7 +48,7 @@
       </trans-unit>
       <trans-unit id="title.task_list">
         <source>title.task_list</source>
-        <target>Task list</target>
+        <target>Transactions list</target>
       </trans-unit>
       <trans-unit id="label.created_at">
         <source>label.created_at</source>
@@ -60,8 +60,92 @@
       </trans-unit>
     <trans-unit id="title.task_details">
         <source>title.task_details</source>
-        <target>Task details #%id%</target>
+        <target>Transaction details #%id%</target>
     </trans-unit>
+      <trans-unit id="label.category">
+        <source>label.category</source>
+        <target>Category</target>
+      </trans-unit>
+      <trans-unit id="title.category_create">
+         <source>title.category_create</source>
+         <target>Create category</target>
+      </trans-unit>
+      <trans-unit id="action.save">
+         <source>action.save</source>
+         <target>Save</target>
+      </trans-unit>
+      <trans-unit id="action.back_to_list">
+          <source>action.back_to_list</source>
+          <target>Back</target>
+       </trans-unit>
+       <trans-unit id="message.created_successfully">
+          <source>message.created_successfully</source>
+          <target>Created successfully</target>
+       </trans-unit>
+       <trans-unit id="title.category_delete">
+          <source>title.category_delete</source>
+          <target>Delete category</target>
+       </trans-unit>
+       <trans-unit id="action.delete">
+          <source>action.delete</source>
+          <target>Delete</target>
+       </trans-unit>
+       <trans-unit id="message.deleted_successfully">
+          <source>message.deleted_successfully</source>
+          <target>Deleted successfully</target>
+       </trans-unit>
+       <trans-unit id="title.category_edit">
+          <source>title.category_edit</source>
+          <target>Edit category</target>
+       </trans-unit>
+       <trans-unit id="title.category_list">
+          <source>title.category_list</source>
+          <target>Category list</target>
+       </trans-unit>
+       <trans-unit id="label.edit">
+          <source>label.edit</source>
+          <target>Edit</target>
+       </trans-unit>
+       <trans-unit id="action.edit">
+          <source>action.edit</source>
+          <target>Change</target>
+       </trans-unit>
+       <trans-unit id="label.delete">
+          <source>label.delete</source>
+          <target>Deletion</target>
+       </trans-unit>
+       <trans-unit id="action.create">
+          <source>action.create</source>
+          <target>Create</target>
+       </trans-unit>
+       <trans-unit id="message.form_error">
+          <source>message.form_error</source>
+          <target>Invalid input</target>
+       </trans-unit>
+       <trans-unit id="message.category_contains_tasks">
+          <source>message.category_contains_tasks</source>
+          <target>Category is used in existing transaction</target>
+       </trans-unit>
+       <trans-unit id="message.edited_successfully">
+          <source>message.edited_successfully</source>
+          <target>Edited successfully</target>
+       </trans-unit>
+       <trans-unit id="title.task_edit">
+          <source>title.task_edit</source>
+          <target>Edit transaction</target>
+       </trans-unit>
+       <trans-unit id="title.task_delete">
+          <source>title.task_delete</source>
+          <target>Delete transaction</target>
+       </trans-unit>
+       <trans-unit id="title.task_create">
+          <source>title.task_create</source>
+          <target>Create transaction</target>
+       </trans-unit>
+<!--        <trans-unit id="label.none"> -->
+<!--           <source>label.none</source> -->
+<!--           <target> </target> -->
+<!--        </trans-unit> -->
     </body>
   </file>
 </xliff>

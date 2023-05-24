@@ -5,8 +5,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Category;
 use App\Entity\Task;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,8 +22,6 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Task[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  *
  * @extends ServiceEntityRepository<Task>
- *
- * @psalm-suppress LessSpecificImplementedReturnType
  */
 class TaskRepository extends ServiceEntityRepository
 {
@@ -33,7 +34,7 @@ class TaskRepository extends ServiceEntityRepository
      *
      * @constant int
      */
-    public const PAGINATOR_ITEMS_PER_PAGE = 3;
+    public const PAGINATOR_ITEMS_PER_PAGE = 10;
 
     /**
      * Constructor.
@@ -53,7 +54,55 @@ class TaskRepository extends ServiceEntityRepository
     public function queryAll(): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder()
-            ->orderBy('task.updatedAt', 'DESC');
+            ->select(
+                'partial transaction.{id, createdAt, updatedAt, title}',
+                'partial category.{id, title}'
+            )
+            ->join('transaction.category', 'category')
+            ->orderBy('transaction.updatedAt', 'DESC');
+    }
+
+    /**
+     * Count tasks by category.
+     *
+     * @param Category $category Category
+     *
+     * @return int Number of tasks in category
+     *
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function countByCategory(Category $category): int
+    {
+        $qb = $this->getOrCreateQueryBuilder();
+
+        return $qb->select($qb->expr()->countDistinct('transaction.id'))
+            ->where('transaction.category = :category')
+            ->setParameter(':category', $category)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * Save entity.
+     *
+     * @param Task $task Task entity
+     */
+    public function save(Task $task): void
+    {
+        $this->_em->persist($task);
+        $this->_em->flush();
+    }
+
+    /**
+     * Delete entity.
+     *
+     * @param Task $task Task entity
+     */
+    public function delete(Task $task): void
+    {
+        $this->_em->remove($task);
+        $this->_em->flush();
     }
 
     /**
@@ -65,6 +114,7 @@ class TaskRepository extends ServiceEntityRepository
      */
     private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {
-        return $queryBuilder ?? $this->createQueryBuilder('task');
+        return $queryBuilder ?? $this->createQueryBuilder('transaction');
     }
+
 }

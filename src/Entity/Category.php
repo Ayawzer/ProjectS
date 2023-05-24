@@ -1,24 +1,27 @@
 <?php
 /**
- * Task entity.
-*/
+ * Category entity.
+ */
 
 namespace App\Entity;
 
-use App\Repository\TaskRepository;
+use App\Repository\CategoryRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class Task.
+ * Class Category.
  *
  * @psalm-suppress MissingConstructor
  */
-#[ORM\Entity(repositoryClass: TaskRepository::class)]
-#[ORM\Table(name: 'transactions')]
-class Task
+#[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[ORM\Table(name: 'categories')]
+#[ORM\UniqueConstraint(name: 'uq_categories_title', columns: ['title'])]
+#[UniqueEntity(fields: ['title'])]
+class Category
 {
     /**
      * Primary key.
@@ -62,14 +65,14 @@ class Task
     private ?string $title;
 
     /**
-     * Category.
-     *
-     * @var Category
+     * Slug.
+     * @var string|null
      */
-    #[ORM\ManyToOne(fetch: "EXTRA_LAZY")]
-    #[Assert\NotBlank]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Category $category = null;
+    #[ORM\Column(type: 'string', length: 64)]
+    #[Assert\Type('string')]
+    #[Assert\Length(min: 3, max: 64)]
+    #[Gedmo\Slug(fields: ['title'])]
+    private ?string $slug;
 
     /**
      * Getter for Id.
@@ -141,24 +144,14 @@ class Task
         $this->title = $title;
     }
 
-    /**
-     * Getter for category
-     *
-     * @return Category|null Category
-     */
-    public function getCategory(): ?Category
+    public function getSlug(): ?string
     {
-        return $this->category;
+        return $this->slug;
     }
 
-    /**
-     * Setter for category
-     *
-     * @param Category|null $category Category
-     */
-    public function setCategory(?Category $category): self
+    public function setSlug(string $slug): self
     {
-        $this->category = $category;
+        $this->slug = $slug;
 
         return $this;
     }
