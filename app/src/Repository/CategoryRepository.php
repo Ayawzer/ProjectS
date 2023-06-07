@@ -17,16 +17,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CategoryRepository extends ServiceEntityRepository
 {
-    /**
-     * Items per page.
-     *
-     * Use constants to define configuration options that rarely change instead
-     * of specifying them in configuration files.
-     * See https://symfony.com/doc/current/best_practices.html#configuration
-     *
-     * @constant int
-     */
-    public const PAGINATOR_ITEMS_PER_PAGE = 10;
 
     /**
      * Query all records.
@@ -38,7 +28,9 @@ class CategoryRepository extends ServiceEntityRepository
         return $this->getOrCreateQueryBuilder()
             ->select(
                 'partial category.{id, createdAt, updatedAt, title}',
+                'partial transactions.{id, title, amount}',
             )
+            ->leftJoin('category.transactions', 'transactions')
             ->orderBy('category.updatedAt', 'DESC');
     }
 
@@ -53,9 +45,6 @@ class CategoryRepository extends ServiceEntityRepository
     {
         return $queryBuilder ?? $this->createQueryBuilder('category');
     }
-
-
-
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -73,19 +62,6 @@ class CategoryRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
-    /**
-     * @param Category $entity
-     * @param bool $flush
-     * @return void
-     */
-    public function remove(Category $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
 
     /**
      * Delete entity.
@@ -98,28 +74,16 @@ class CategoryRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
-//    /**
-//     * @return Category[] Returns an array of Category objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * Find one by Id.
+     *
+     * @param int $id Id
+     *
+     * @return Category|null Result
+     */
+    public function findOneById(int $id): ?Category
+    {
+        return $this->find($id);
+    }
 
-//    public function findOneBySomeField($value): ?Category
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

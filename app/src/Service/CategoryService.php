@@ -1,4 +1,7 @@
 <?php
+/**
+ * Category service.
+ */
 
 namespace App\Service;
 
@@ -45,7 +48,7 @@ class CategoryService implements CategoryServiceInterface
         return $this->paginator->paginate(
             $this->categoryRepository->queryAll(),
             $page,
-            TaskRepository::PAGINATOR_ITEMS_PER_PAGE
+            TaskRepository::PAGINATOR_ITEMS_PER_PAGE_CATEGORY
         );
     }
 
@@ -87,4 +90,19 @@ class CategoryService implements CategoryServiceInterface
             return false;
         }
     }
+
+    /**
+     * Find by id.
+     *
+     * @param int $id Category id
+     *
+     * @return Category|null Category entity
+     *
+     * @throws NonUniqueResultException
+     */
+    public function findOneById(int $id): ?Category
+    {
+        return $this->categoryRepository->findOneById($id);
+    }
+
 }

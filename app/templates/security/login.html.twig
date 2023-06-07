@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'label.log_in'|trans }}
+{% endblock %}
+
+{% block body %}
+<form method="post">
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    {% if app.user %}
+        <div class="mb-3">
+            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+        </div>
+    {% endif %}
+    <section class="vh-100 gradient-custom">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md col-lg-6 col-xl-5">
+                    <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                        <div class="card-body p-5 text-center">
+                            <div class="d-flex flex-column">
+
+                                <h2 class="fw-bold mb-2 text-uppercase">{{ 'label.sign_in'|trans }}</h2>
+
+                                <div class="form-outline form-white my-4">
+                                    <label class="form-label" for="inputEmail">{{ 'label.email'|trans }}</label>
+                                    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control form-control-lg" autocomplete="email" required autofocus>
+                                </div>
+
+                                <div class="form-outline form-white mb-4">
+                                    <label class="form-label" for="inputPassword">{{ 'label.password'|trans }}</label>
+                                    <input type="password" name="password" id="inputPassword" class="form-control form-control-lg" autocomplete="current-password" required>
+                                </div>
+
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                                <button class="btn btn-outline-light btn-lg px-5 mt-4" type="submit">
+                                    {{ 'action.sign_in'|trans }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+{% endblock %}

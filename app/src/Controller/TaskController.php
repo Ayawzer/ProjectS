@@ -5,6 +5,8 @@
 
 namespace App\Controller;
 
+use App\Repository\WalletRepository;
+use App\Service\WalletService;
 use App\Entity\Task;
 use App\Form\Type\TaskType;
 use App\Service\TaskServiceInterface;
@@ -32,15 +34,22 @@ class TaskController extends AbstractController
     private TranslatorInterface $translator;
 
     /**
+     * @var WalletRepository
+     */
+    private WalletRepository $walletRepository;
+
+    /**
      * Constructor.
      *
      * @param TaskServiceInterface $taskService Task service
-     * @param TranslatorInterface  $translator  Translator
+     * @param TranslatorInterface $translator Translator
+     * @param WalletRepository $walletRepository
      */
-    public function __construct(TaskServiceInterface $taskService, TranslatorInterface $translator)
+    public function __construct(TaskServiceInterface $taskService, TranslatorInterface $translator, WalletRepository $walletRepository)
     {
         $this->taskService = $taskService;
         $this->translator = $translator;
+        $this->walletRepository = $walletRepository;
     }
 
     /**
@@ -53,45 +62,75 @@ class TaskController extends AbstractController
     #[Route(name: 'transaction_index', methods: 'GET')]
     public function index(Request $request): Response
     {
+        $filters = $this->getFilters($request);
         $pagination = $this->taskService->getPaginatedList(
-            $request->query->getInt('page', 1)
+            $request->query->getInt('page', 1),
+            $filters
         );
 
         return $this->render('transaction/index.html.twig', ['pagination' => $pagination]);
     }
 
     /**
-     * Show action.
+     * Get filters from request.
      *
-     * @param Task $task Task entity
+     * @param Request $request HTTP request
      *
-     * @return Response HTTP response
+     * @return array<string, int> Array of filters
+     *
+     * @psalm-return array{category_id: int}
      */
-    #[Route('/{id}', name: 'transaction_show', requirements: ['id' => '[1-9]\d*'], methods: 'GET')]
-    public function show(Task $task): Response
+    private function getFilters(Request $request): array
     {
-        return $this->render('transaction/show.html.twig', ['transaction' => $task]);
+        $filters = [];
+        $filters['category_id'] = $request->query->getInt('filters_category_id');
+
+        return $filters;
     }
 
     /**
      * Create action.
      *
      * @param Request $request HTTP request
-     *
+     * @param WalletService $walletService
+     * @param $wallet
      * @return Response HTTP response
      */
-    #[Route('/create', name: 'transaction_create', methods: 'GET|POST', )]
-    public function create(Request $request): Response
+    #[Route('/create/{wallet?}', name: 'transaction_create', methods: 'GET|POST', )]
+    public function create(Request $request, WalletService $walletService, $wallet=null): Response
     {
+
         $task = new Task();
+
+        if ($wallet !== null) {
+            $walletEntity = $this->walletRepository->find($wallet);
+            if ($walletEntity !== null) {
+                $task->setWallet($walletEntity);
+            }
+        }
+
         $form = $this->createForm(
             TaskType::class,
             $task,
-            ['action' => $this->generateUrl('transaction_create')]
+            [
+                'action' => $this->generateUrl('transaction_create'),
+            ]
         );
         $form->handleRequest($request);
 
+        $referer = $request->headers->get('referer');
+
         if ($form->isSubmitted() && $form->isValid()) {
+            // Now that the form is submitted and valid, the Task has a Wallet associated
+            if (!$walletService->canAcceptTransaction($task->getWallet(),$task->getAmount())) {
+                $this->addFlash(
+                    'warning',
+                    $this->translator->trans('message.transaction_not_possible')
+                );
+
+                return $this->render('transaction/create.html.twig',  ['form' => $form->createView()]);
+            }
+
             $this->taskService->save($task);
 
             $this->addFlash(
@@ -99,23 +138,36 @@ class TaskController extends AbstractController
                 $this->translator->trans('message.created_successfully')
             );
 
+//            if ($wallet !== null) {
+//                return $this->redirectToRoute($referer);
+//            }
+
             return $this->redirectToRoute('transaction_index');
+
         }
 
-        return $this->render('transaction/create.html.twig',  ['form' => $form->createView()]);
+        return $this->render('transaction/create.html.twig',
+            [
+                'form' => $form->createView(),
+                'referer' => $referer,
+                'wallet_id' => $wallet !== null ? $wallet : null,
+            ]
+        );
     }
+
 
     /**
      * Edit action.
      *
      * @param Request $request HTTP request
      * @param Task    $task    Task entity
-     *
+     * @param WalletService $walletService WalletService
      * @return Response HTTP response
      */
     #[Route('/{id}/edit', name: 'transaction_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
-    public function edit(Request $request, Task $task): Response
+    public function edit(Request $request, Task $task, WalletService $walletService): Response
     {
+
         $form = $this->createForm(
             TaskType::class,
             $task,
@@ -126,8 +178,20 @@ class TaskController extends AbstractController
         );
         $form->handleRequest($request);
 
+        $referer = $request->headers->get('referer');
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->taskService->save($task);
+            // Check if the transaction can be accepted based on wallet's balance
+            if (!$walletService->canAcceptTransaction($task->getWallet(), $form->get('amount')->getData(), $task->getAmount())) {
+                $this->addFlash(
+                    'warning',
+                    $this->translator->trans('message.transaction_not_possible')
+                );
+
+                return $this->render('transaction/edit.html.twig', ['form' => $form->createView(), 'transaction' => $task]);
+            }
+
+            $this->taskService->save($task, $form->get('amount')->getData());
 
             $this->addFlash(
                 'success',
@@ -142,6 +206,7 @@ class TaskController extends AbstractController
             [
                 'form' => $form->createView(),
                 'transaction' => $task,
+                'referer' => $referer,
             ]
         );
     }
@@ -155,19 +220,28 @@ class TaskController extends AbstractController
      * @return Response HTTP response
      */
     #[Route('/{id}/delete', name: 'transaction_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
-    public function delete(Request $request, Task $task): Response
+    public function delete(Request $request, Task $task, WalletService $walletService): Response
     {
-        $form = $this->createForm(
-            FormType::class,
-            $task,
-            [
-                'method' => 'DELETE',
-                'action' => $this->generateUrl('transaction_delete', ['id' => $task->getId()]),
-            ]
-        );
+        $form = $this->createForm(FormType::class, $task, [
+            'method' => 'DELETE',
+            'action' => $this->generateUrl('transaction_delete', ['id' => $task->getId()]),
+        ]);
         $form->handleRequest($request);
 
+        $referer = $request->headers->get('referer');
+
         if ($form->isSubmitted() && $form->isValid()) {
+            if (!$walletService->canAcceptTransaction($task->getWallet(), -$task->getAmount())) {
+                $this->addFlash(
+                    'warning',
+                    $this->translator->trans('message.transaction_not_possible')
+                );
+
+                return $this->render('transaction/delete.html.twig', ['form' => $form->createView()]);
+            }
+
+            // Reverse the transaction amount in the wallet's balance
+            $walletService->updateBalance($task->getWallet(), -$task->getAmount());
             $this->taskService->delete($task);
 
             $this->addFlash(
@@ -183,7 +257,9 @@ class TaskController extends AbstractController
             [
                 'form' => $form->createView(),
                 'transaction' => $task,
+                'referer' => $referer,
             ]
         );
     }
+
 }

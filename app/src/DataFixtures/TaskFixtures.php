@@ -6,11 +6,9 @@
 namespace App\DataFixtures;
 
 use App\Entity\Category;
-use App\Entity\Enum\TaskStatus;
-use App\Entity\Tag;
+use App\Entity\Wallet;
+//use App\Entity\Enum\TaskStatus;
 use App\Entity\Task;
-use App\Entity\User;
-//use DateTimeImmutable;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 /**
@@ -34,19 +32,16 @@ class TaskFixtures extends AbstractBaseFixtures implements DependentFixtureInter
         $this->createMany(100, 'tasks', function (int $i) {
             $task = new Task();
             $task->setTitle($this->faker->sentence);
-//            $transaction->setCreatedAt(
-//                DateTimeImmutable::createFromMutable(
-//                    $this->faker->dateTimeBetween('-100 days', '-1 days')
-//                )
-//            );
-//            $transaction->setUpdatedAt(
-//                DateTimeImmutable::createFromMutable(
-//                    $this->faker->dateTimeBetween('-100 days', '-1 days')
-//                )
-//            );
+            $task->setAmount($this->faker->randomDigitNotNull());
+            $task->setBalanceAfterTransaction($this->faker->randomDigitNotNull());
+
             /** @var Category $category */
             $category = $this->getRandomReference('categories');
             $task->setCategory($category);
+            /** @var Wallet $wallet */
+            $wallet = $this->getRandomReference('wallet');
+            $task->setWallet($wallet);
+
 
             return $task;
         });
@@ -64,6 +59,8 @@ class TaskFixtures extends AbstractBaseFixtures implements DependentFixtureInter
      */
     public function getDependencies(): array
     {
-        return [CategoryFixtures::class];
+        return [CategoryFixtures::class, WalletFixtures::class];
     }
+
+
 }

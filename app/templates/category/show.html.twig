@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title.category_details'|trans({'%id%': category.id|default('')}) }}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ 'title.category_details'|trans({'%id%': category.id|default('')}) }}</h1>
+    {% if category is defined and category|length %}
+        <dl class="dl-horizontal">
+            <dt>{{ 'label.id'|trans }}</dt>
+            <dd>{{ category.id }}</dd>
+            <dt>{{ 'label.created_at'|trans }}</dt>
+            <dd>{{ category.createdAt|format_date('long') }}</dd>
+            <dt>{{ 'label.updated_at'|trans }}</dt>
+            <dd>{{  category.updatedAt|format_date('long') }}</dd>
+            <dt>{{ 'label.title'|trans }}</dt>
+            <dd>{{  category.title }}</dd>
+        </dl>
+
+    {% if category is defined and category|length %}
+        <h3>{{ 'label.transactions'|trans }}</h3>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{ 'label.created_at'|trans }}</th>
+                <th>{{ 'label.title'|trans }}</th>
+                <th>{{ 'label.wallet'|trans }}</th>
+                <th>{{ 'label.amount'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for transaction in transactions %}
+
+                <tr>
+                    <td>{{ transaction.createdAt|format_date('long') }}</td>
+                    <td>{{ transaction.title }}</td>
+                    <td>{{ transaction.wallet.title }}</td>
+                    <td>{{ transaction.balanceAfterTransaction|number_format(2, ',', ' ') }} PLN</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    {% endif %}
+
+        <p>
+            <a href="{{ url('transaction_index') }}" title="{{ 'action.back'|trans }}">
+                {{ 'action.back'|trans }}
+            </a>
+        </p>
+    {% else %}
+        <p>
+            {{ 'message.record_not_found'|trans }}
+        </p>
+    {% endif %}
+{% endblock %}

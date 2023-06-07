@@ -7,6 +7,7 @@ namespace App\Repository;
 
 use App\Entity\Category;
 use App\Entity\Task;
+use App\Entity\Wallet;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -34,7 +35,9 @@ class TaskRepository extends ServiceEntityRepository
      *
      * @constant int
      */
-    public const PAGINATOR_ITEMS_PER_PAGE = 10;
+    public const PAGINATOR_ITEMS_PER_PAGE_TASK = 10;
+    public const PAGINATOR_ITEMS_PER_PAGE_CATEGORY = 10;
+    public const PAGINATOR_ITEMS_PER_PAGE_WALLET = 10;
 
     /**
      * Constructor.
@@ -46,20 +49,50 @@ class TaskRepository extends ServiceEntityRepository
         parent::__construct($registry, Task::class);
     }
 
+    public function queryNotAll(array $filters = []): QueryBuilder
+    {
+        $queryBuilder = $this->queryAll($filters);
+
+        return $queryBuilder;
+    }
+
     /**
      * Query all records.
      *
      * @return QueryBuilder Query builder
      */
-    public function queryAll(): QueryBuilder
+    public function queryAll(array $filters): QueryBuilder
     {
-        return $this->getOrCreateQueryBuilder()
+        $queryBuilder = $this->getOrCreateQueryBuilder()
             ->select(
-                'partial transaction.{id, createdAt, updatedAt, title}',
-                'partial category.{id, title}'
+                'partial transaction.{id, createdAt, updatedAt, title, amount}',
+                'partial category.{id, title}',
+                'partial wallet.{id, title}'
+
             )
             ->join('transaction.category', 'category')
+            ->join('transaction.wallet', 'wallet')
             ->orderBy('transaction.updatedAt', 'DESC');
+
+        return $this->applyFiltersToList($queryBuilder, $filters);
+    }
+
+    /**
+     * Apply filters to paginated list.
+     *
+     * @param QueryBuilder          $queryBuilder Query builder
+     * @param array<string, object> $filters      Filters array
+     *
+     * @return QueryBuilder Query builder
+     */
+    private function applyFiltersToList(QueryBuilder $queryBuilder, array $filters = []): QueryBuilder
+    {
+        if (isset($filters['category']) && $filters['category'] instanceof Category) {
+            $queryBuilder->andWhere('category = :category')
+                ->setParameter('category', $filters['category']);
+        }
+
+        return $queryBuilder;
     }
 
     /**
@@ -79,6 +112,27 @@ class TaskRepository extends ServiceEntityRepository
         return $qb->select($qb->expr()->countDistinct('transaction.id'))
             ->where('transaction.category = :category')
             ->setParameter(':category', $category)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * Count tasks by Wallet.
+     *
+     * @param Wallet $wallet Wallet
+     *
+     * @return int Number of tasks in wallet
+     *
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function countByWallet(Wallet $wallet): int
+    {
+        $qb = $this->getOrCreateQueryBuilder();
+
+        return $qb->select($qb->expr()->countDistinct('transaction.id'))
+            ->where('transaction.wallet = :wallet')
+            ->setParameter(':wallet', $wallet)
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -116,5 +170,27 @@ class TaskRepository extends ServiceEntityRepository
     {
         return $queryBuilder ?? $this->createQueryBuilder('transaction');
     }
+
+    public function findTransactionsForWalletByDateRange(Wallet $wallet, ?\DateTimeInterface $dateFrom, ?\DateTimeInterface $dateTo)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->where('t.wallet = :wallet')
+            ->setParameter('wallet', $wallet)
+            ->orderBy('t.createdAt', 'DESC');
+
+
+        if ($dateFrom) {
+            $qb->andWhere('t.createdAt >= :dateFrom')
+                ->setParameter('dateFrom', $dateFrom);
+        }
+
+        if ($dateTo) {
+            $qb->andWhere('t.createdAt <= :dateTo')
+                ->setParameter('dateTo', $dateTo);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
 
 }

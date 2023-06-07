@@ -142,10 +142,146 @@
           <source>title.task_create</source>
           <target>Create transaction</target>
        </trans-unit>
-<!--        <trans-unit id="label.none"> -->
-<!--           <source>label.none</source> -->
-<!--           <target> </target> -->
-<!--        </trans-unit> -->
+       <trans-unit id="label.amount">
+          <source>label.amount</source>
+          <target>Amount</target>
+       </trans-unit>
+       <trans-unit id="title.wallet_list">
+          <source>title.wallet_list</source>
+          <target>Wallet list</target>
+       </trans-unit>
+       <trans-unit id="label.type">
+          <source>label.type</source>
+          <target>Type</target>
+       </trans-unit>
+       <trans-unit id="label.balance">
+          <source>label.balance</source>
+          <target>Balance</target>
+       </trans-unit>
+       <trans-unit id="label.wallet">
+          <source>label.wallet</source>
+          <target>Wallet</target>
+       </trans-unit>
+       <trans-unit id="title.wallet_details">
+           <source>title.wallet_details</source>
+           <target>Wallet details #%id%</target>
+       </trans-unit>
+       <trans-unit id="label.transactions">
+           <source>label.transactions</source>
+           <target>Transactions</target>
+       </trans-unit>
+       <trans-unit id="message.transaction_not_possible">
+           <source>message.transaction_not_possible</source>
+           <target>Balance can not be negative</target>
+       </trans-unit>
+       <trans-unit id="title.wallet_create">
+           <source>title.wallet_create</source>
+           <target>Create wallet</target>
+       </trans-unit>
+       <trans-unit id="title.wallet_delete">
+           <source>title.wallet_delete</source>
+           <target>Delete wallet</target>
+       </trans-unit>
+       <trans-unit id="message.wallet_contains_tasks">
+           <source>message.wallet_contains_tasks</source>
+           <target>Wallet contains assigned transactions</target>
+       </trans-unit>
+       <trans-unit id="action_logout">
+           <source>action_logout</source>
+           <target>Log out</target>
+       </trans-unit>
+       <trans-unit id="action_wallets">
+           <source>action_wallets</source>
+           <target>Wallets</target>
+       </trans-unit>
+       <trans-unit id="action_transactions">
+           <source>action_transactions</source>
+           <target>Transactions</target>
+       </trans-unit>
+       <trans-unit id="action_categories">
+           <source>action_categories</source>
+           <target>Categories</target>
+       </trans-unit>
+        <trans-unit id="label.log_in">
+           <source>label.log_in</source>
+           <target>Log in</target>
+       </trans-unit>
+       <trans-unit id="label.sign_in">
+           <source>label.sign_in</source>
+           <target>Sign in</target>
+       </trans-unit>
+       <trans-unit id="label.password">
+           <source>label.password</source>
+           <target>Password</target>
+       </trans-unit>
+       <trans-unit id="action.sign_in">
+           <source>action.sign_in</source>
+           <target>Sign in</target>
+       </trans-unit>
+       <trans-unit id="action.change_password">
+           <source>action.change_password</source>
+           <target>Change password</target>
+       </trans-unit>
+       <trans-unit id="title.change_password">
+           <source>title.change_password</source>
+           <target>Change password</target>
+       </trans-unit>
+       <trans-unit id="label.old_password">
+           <source>label.old_password</source>
+           <target>Old password</target>
+       </trans-unit>
+       <trans-unit id="label.new_password">
+           <source>label.new_password</source>
+           <target>New password</target>
+       </trans-unit>
+       <trans-unit id="message.password_incorrect">
+           <source>message.password_incorrect</source>
+           <target>Old password incorrect</target>
+       </trans-unit>
+       <trans-unit id="message.password_changed">
+           <source>message.password_changed</source>
+           <target>Password changed successfully</target>
+       </trans-unit>
+       <trans-unit id="title.change_info">
+           <source>title.change_info</source>
+           <target>Change your information</target>
+       </trans-unit>
+       <trans-unit id="action.change_info">
+           <source>action.change_info</source>
+           <target>Change</target>
+       </trans-unit>
+       <trans-unit id="message.email_changed">
+           <source>message.email_changed</source>
+           <target>Email changed successfully</target>
+       </trans-unit>
+       <trans-unit id="action.change_email">
+           <source>action.change_email</source>
+           <target>Change email</target>
+       </trans-unit>
+       <trans-unit id="label.email">
+           <source>label.email</source>
+           <target>Email</target>
+       </trans-unit>
+       <trans-unit id="label.dateFrom">
+           <source>label.dateFrom</source>
+           <target>From</target>
+       </trans-unit>
+       <trans-unit id="label.dateTo">
+           <source>label.dateTo</source>
+           <target>To</target>
+       </trans-unit>
+       <trans-unit id="action.filter">
+           <source>action.filter</source>
+           <target>Filter</target>
+       </trans-unit>
+       <trans-unit id="label.balance_after_transaction">
+           <source>label.balance_after_transaction</source>
+           <target>Balance after transaction</target>
+       </trans-unit>
+       <trans-unit id="title.category_details">
+           <source>title.category_details</source>
+           <target>Category details #%id%</target>
+       </trans-unit>
     </body>
   </file>
 </xliff>

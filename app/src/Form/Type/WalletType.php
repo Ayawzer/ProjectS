@@ -1,24 +1,21 @@
 <?php
 /**
- * Task type.
+ * Wallet type.
  */
 
 namespace App\Form\Type;
 
-use App\Entity\Category;
-use App\Entity\Task;
 use App\Entity\Wallet;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class TaskType.
+ * Class WalletType.
  */
-class TaskType extends AbstractType
+class WalletType extends AbstractType
 {
     /**
      * Builds the form.
@@ -39,39 +36,29 @@ class TaskType extends AbstractType
             [
                 'label' => 'label.title',
                 'required' => true,
-                'attr' => ['max_length' => 255],
-            ]);
+            ]
+        );
+
         $builder->add(
-            'category',
-            EntityType::class,
+            'type',
+            TextType::class,
             [
-                'class' => Category::class,
-                'choice_label' => function ($category): string {
-                    return $category->getTitle();
-                },
-                'label' => 'label.category',
+                'label' => 'label.type',
                 'required' => true,
             ]
         );
+
         $builder->add(
-            'amount',
-            NumberType::class,
+            'balance',
+            MoneyType::class,
             [
-                'label' => 'label.amount',
+                'label' => 'label.balance',
+                'currency' => 'PLN',
                 'required' => true,
-                'error_bubbling' => true,
-            ]
-        );
-        $builder->add(
-            'wallet',
-            EntityType::class,
-            [
-                'class' => Wallet::class,
-                'choice_label' => function ($wallet): string {
-                    return $wallet->getTitle();
-                },
-                'label' => 'label.wallet',
-                'required' => true,
+                'scale' => 2,
+                'attr' => [
+                    'min' => 0.00
+                ],
             ]
         );
     }
@@ -83,7 +70,7 @@ class TaskType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['data_class' => Task::class]);
+        $resolver->setDefaults(['data_class' => Wallet::class]);
     }
 
     /**
@@ -96,6 +83,6 @@ class TaskType extends AbstractType
      */
     public function getBlockPrefix(): string
     {
-        return 'transaction';
+        return 'wallet';
     }
 }

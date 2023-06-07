@@ -15,12 +15,11 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'transaction.id') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label.created_at'|trans, 'transaction.createdAt') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.updated_at'|trans, 'transaction.updatedAt') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label.title'|trans, 'transaction.title') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.wallet'|trans, 'wallet.title') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label.category'|trans, 'category.title') }}</th>
-                <th>{{ 'label.actions'|trans }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.amount'|trans, 'transaction.amount') }}</th>
                 <th>{{ 'label.edit'|trans }}</th>
                 <th>{{ 'label.delete'|trans }}</th>
             </tr>
@@ -28,16 +27,15 @@
             <tbody>
             {% for task in pagination.items %}
                 <tr>
-                    <td>{{ task.id }}</td>
                     <td>{{ task.createdAt|format_date('long') }}</td>
-                    <td>{{ task.updatedAt|format_date('long') }}</td>
                     <td>{{ task.title }}</td>
-                    <td>{{ task.category.title }}</td>
+                    <td>{{ task.wallet.title }}</td>
                     <td>
-                        <a href="{{ url('transaction_show', {id: task.id}) }}" title="{{ 'action.view'|trans }}">
-                            {{ 'action.view'|trans }}
+                        <a href="{{ url('transaction_index', {'filters.category_id' : task.category.id}) }}" title="{{ task.category.title }}">
+                            {{ task.category.title }}
                         </a>
                     </td>
+                    <td>{{ task.amount|number_format(2, ',', ' ') }} PLN</td>
                     <td>
                         <a href="{{ url('transaction_edit', {id: task.id}) }}" title="{{ 'action.edit'|trans }}">
                             {{ 'action.edit'|trans }}

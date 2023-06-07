@@ -13,24 +13,43 @@ parameters:
 {% endblock %}
 
 {% block body %}
-    <h1>{{ page_title }}</h1>
-    {{ form_start(form) }}
-    {% if false == form.vars.valid %}
-        {% include 'default/_single_alert_message.html.twig' with {
-            type: 'danger',
-            message: 'message.form_error'|trans,
-        }%}
-    {% endif %}
-    {{ form_widget(form) }}
-    <div class="form-group row float-sm-right">
-        <input type="submit" value="{{ submit_label }}" class="btn btn-primary"/>
-    </div>
-    {% if back_to_list_path|default(false) %}
-        <div class="form-group row float-sm-left">
-            <a href="{{ url(back_to_list_path) }}" class="btn btn-link">
-                {{ 'action.back_to_list'|trans }}
-            </a>
+    <section class="gradient-custom py-5">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12">
+                    <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                        <div class="card-body p-5 text-center">
+
+                            <div class="mb-md-5 mt-md-4 pb-5">
+                                <h1 class="fw-bold my-5">{{ page_title }}</h1>
+
+                                {{ form_start(form) }}
+                                {% if false == form.vars.valid %}
+                                    {% include 'default/_single_alert_message.html.twig' with {
+                                        type: 'danger',
+                                        message: 'message.form_error'|trans,
+                                    } %}
+                                {% endif %}
+
+                                {{ form_widget(form) }}
+
+                                <div class="d-flex flex-column pt-4">
+                                    <input type="submit" value="{{ submit_label }}" class="btn btn-primary btn-lg mb-3"/>
+
+                                    {% if referer is defined %}
+                                        <a href="{{ referer }}" class="btn btn-outline-light btn-lg">
+                                            {{ 'action.back_to_list'|trans }}
+                                        </a>
+                                    {% endif %}
+                                </div>
+
+                                {{ form_end(form) }}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    {% endif %}
-    {{ form_end(form) }}
+    </section>
 {% endblock %}

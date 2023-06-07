@@ -60,7 +60,24 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * Index action.
+     * Show action.
+     *
+     * @param Category $category Category entity
+     *
+     * @return Response HTTP response
+     */
+    #[Route('/{id}', name: 'category_show', requirements: ['id' => '[1-9]\d*'], methods: 'GET')]
+    public function show(Category $category): Response
+    {
+        $transactions = $category->getTransactions();
+        return $this->render('category/show.html.twig', [
+            'category' => $category,
+            'transactions' => $transactions,
+        ]);
+    }
+
+    /**
+     * Create action.
      *
      * @param Request $request HTTP Request
      *
@@ -72,6 +89,8 @@ class CategoryController extends AbstractController
         $category = new Category();
         $form = $this->createForm(CategoryType::class, $category);
         $form->handleRequest($request);
+
+        $referer = $request->headers->get('referer');
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->categoryService->save($category);
@@ -86,7 +105,10 @@ class CategoryController extends AbstractController
 
         return $this->render(
             'category/create.html.twig',
-            ['form' => $form->createView()]
+            [
+                'form' => $form->createView(),
+                'referer' => $referer,
+            ]
         );
     }
 
@@ -111,6 +133,8 @@ class CategoryController extends AbstractController
         );
         $form->handleRequest($request);
 
+        $referer = $request->headers->get('referer');
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->categoryService->save($category);
 
@@ -127,6 +151,7 @@ class CategoryController extends AbstractController
             [
                 'form' => $form->createView(),
                 'category' => $category,
+                'referer' => $referer,
             ]
         );
     }
@@ -161,6 +186,8 @@ class CategoryController extends AbstractController
         );
         $form->handleRequest($request);
 
+        $referer = $request->headers->get('referer');
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->categoryService->delete($category);
 
@@ -177,7 +204,9 @@ class CategoryController extends AbstractController
             [
                 'form' => $form->createView(),
                 'category' => $category,
+                'referer' => $referer,
             ]
         );
     }
+
 }

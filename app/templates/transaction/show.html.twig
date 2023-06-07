@@ -18,6 +18,8 @@
             <dd>{{  transaction.title }}</dd>
             <dt>{{ 'label.category'|trans }}</dt>
             <dd>{{  transaction.category.title }}</dd>
+            <dt>{{ 'label.amount'|trans }}</dt>
+            <dd>{{  transaction.amount }}</dd>
         </dl>
         <p>
             <a href="{{ url('transaction_index') }}" title="{{ 'action.back'|trans }}">

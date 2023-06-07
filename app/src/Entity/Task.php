@@ -7,14 +7,17 @@ namespace App\Entity;
 
 use App\Repository\TaskRepository;
 use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class Task.
  *
  * @psalm-suppress MissingConstructor
+ *
  */
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ORM\Table(name: 'transactions')]
@@ -66,10 +69,34 @@ class Task
      *
      * @var Category
      */
-    #[ORM\ManyToOne(fetch: "EXTRA_LAZY")]
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: "transactions",fetch: "EXTRA_LAZY")]
     #[Assert\NotBlank]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
+
+    #[ORM\Column(type: Types::FLOAT)]
+    #[Assert\NotBlank]
+    private ?string $amount = null;
+
+    #[ORM\ManyToOne(targetEntity: Wallet::class, inversedBy: "transactions", fetch: "EXTRA_LAZY")]
+    #[Assert\NotBlank]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Wallet $wallet = null;
+
+    #[ORM\Column(type: Types::FLOAT)]
+    private $balanceAfterTransaction;
+
+    public function setBalanceAfterTransaction($balanceAfterTransaction): self
+    {
+        $this->balanceAfterTransaction = $balanceAfterTransaction;
+
+        return $this;
+    }
+
+    public function getBalanceAfterTransaction(): ?float
+    {
+        return $this->balanceAfterTransaction;
+    }
 
     /**
      * Getter for Id.
@@ -162,4 +189,29 @@ class Task
 
         return $this;
     }
+
+    public function getAmount(): ?string
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(string $amount): self
+    {
+        $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function getWallet(): ?Wallet
+    {
+        return $this->wallet;
+    }
+
+    public function setWallet(?Wallet $wallet): self
+    {
+        $this->wallet = $wallet;
+
+        return $this;
+    }
 }
+

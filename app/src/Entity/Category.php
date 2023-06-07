@@ -7,6 +7,8 @@ namespace App\Entity;
 
 use App\Repository\CategoryRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -73,6 +75,25 @@ class Category
     #[Assert\Length(min: 3, max: 64)]
     #[Gedmo\Slug(fields: ['title'])]
     private ?string $slug;
+
+    #[ORM\OneToMany(targetEntity: Task::class, fetch: "EXTRA_LAZY", mappedBy: 'category' )]
+    private $transactions;
+
+    // Initialize the $transactions property as a Doctrine Collection in the Wallet's constructor.
+
+    public function __construct() {
+        $this->transactions = new ArrayCollection();
+    }
+
+    // Add a getter method for the transactions.
+
+    /**
+     * @return Collection|Task[]
+     */
+    public function getTransactions(): Collection
+    {
+        return $this->transactions;
+    }
 
     /**
      * Getter for Id.

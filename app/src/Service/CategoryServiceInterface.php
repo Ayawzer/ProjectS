@@ -1,4 +1,7 @@
 <?php
+/**
+ * Category service interface.
+ */
 
 namespace App\Service;
 
