@@ -49,7 +49,7 @@ class Wallet
      */
     #[ORM\Column(type: Types::FLOAT)]
     #[Assert\Type('float')]
-    #[Assert\GreaterThanOrEqual(0.0, message: 'Balance must be zero or greater')]
+    #[Assert\GreaterThanOrEqual(0.0, message: 'balance.min_value')]
     private ?float $balance = 0.0;
 
     /**

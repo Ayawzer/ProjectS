@@ -20,7 +20,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Class WalletController.
  */
-
 #[Route('/wallet')]
 class WalletController extends AbstractController
 {
@@ -38,7 +37,7 @@ class WalletController extends AbstractController
      * Constructor.
      *
      * @param WalletServiceInterface $walletService Wallet service
-     * @param TranslatorInterface $translator Translator
+     * @param TranslatorInterface    $translator    Translator
      */
     public function __construct(WalletServiceInterface $walletService, TranslatorInterface $translator)
     {
@@ -67,8 +66,7 @@ class WalletController extends AbstractController
      * Show action.
      *
      * @param Request $request HTTP Request
-     * @param Wallet $wallet Wallet entity
-     * @param TaskRepository $taskRepository
+     * @param Wallet  $wallet  Wallet entity
      *
      * @return Response HTTP response
      */
@@ -168,4 +166,3 @@ class WalletController extends AbstractController
         );
     }
 }
-

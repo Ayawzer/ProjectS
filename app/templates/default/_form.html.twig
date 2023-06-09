@@ -13,8 +13,8 @@ parameters:
 {% endblock %}
 
 {% block body %}
-    <section class="gradient-custom py-5">
-        <div class="container py-5 h-100">
+    <section class="gradient-custom py-5 min-vh-100 d-flex justify-content-center align-items-center">
+       <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-12">
                     <div class="card bg-dark text-white" style="border-radius: 1rem;">
@@ -24,11 +24,13 @@ parameters:
                                 <h1 class="fw-bold my-5">{{ page_title }}</h1>
 
                                 {{ form_start(form) }}
-                                {% if false == form.vars.valid %}
-                                    {% include 'default/_single_alert_message.html.twig' with {
-                                        type: 'danger',
-                                        message: 'message.form_error'|trans,
-                                    } %}
+                                <div class="mb-4">
+                                    {% if false == form.vars.valid %}
+                                        {% include 'default/_single_alert_message.html.twig' with {
+                                            type: 'danger',
+                                            message: 'message.form_error'|trans,
+                                        } %}
+                                </div>
                                 {% endif %}
 
                                 {{ form_widget(form) }}
@@ -50,6 +52,6 @@ parameters:
                     </div>
                 </div>
             </div>
-        </div>
+     </div>
     </section>
 {% endblock %}

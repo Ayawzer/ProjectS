@@ -15,8 +15,6 @@ main.container-fluid {
 
 
 div.alert {
-    /*!* fallback for old browsers *!*/
-    /*background: rgb(54, 35, 35);*/
     margin: 0 0 0 0;
 }
 

@@ -1,17 +1,18 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\Type\ChangePasswordType;
 use App\Model\ChangePasswordModel;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ChangePasswordController extends AbstractController
@@ -33,7 +34,7 @@ class ChangePasswordController extends AbstractController
     }
 
     /**
-     * ChangePassword action
+     * ChangePassword action.
      *
      * @param Request $request HTTP Request
      *

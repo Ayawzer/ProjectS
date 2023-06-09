@@ -5,11 +5,11 @@
 
 namespace App\Controller;
 
-use App\Repository\WalletRepository;
-use App\Service\WalletService;
 use App\Entity\Task;
 use App\Form\Type\TaskType;
+use App\Repository\WalletRepository;
 use App\Service\TaskServiceInterface;
+use App\Service\WalletService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,7 +34,7 @@ class TaskController extends AbstractController
     private TranslatorInterface $translator;
 
     /**
-     * @var WalletRepository
+     * Wallet Repository.
      */
     private WalletRepository $walletRepository;
 
@@ -42,8 +42,7 @@ class TaskController extends AbstractController
      * Constructor.
      *
      * @param TaskServiceInterface $taskService Task service
-     * @param TranslatorInterface $translator Translator
-     * @param WalletRepository $walletRepository
+     * @param TranslatorInterface  $translator  Translator
      */
     public function __construct(TaskServiceInterface $taskService, TranslatorInterface $translator, WalletRepository $walletRepository)
     {
@@ -92,19 +91,17 @@ class TaskController extends AbstractController
      * Create action.
      *
      * @param Request $request HTTP request
-     * @param WalletService $walletService
-     * @param $wallet
+     *
      * @return Response HTTP response
      */
     #[Route('/create/{wallet?}', name: 'transaction_create', methods: 'GET|POST', )]
-    public function create(Request $request, WalletService $walletService, $wallet=null): Response
+    public function create(Request $request, WalletService $walletService, $wallet = null): Response
     {
-
         $task = new Task();
 
-        if ($wallet !== null) {
+        if (null !== $wallet) {
             $walletEntity = $this->walletRepository->find($wallet);
-            if ($walletEntity !== null) {
+            if (null !== $walletEntity) {
                 $task->setWallet($walletEntity);
             }
         }
@@ -122,13 +119,13 @@ class TaskController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Now that the form is submitted and valid, the Task has a Wallet associated
-            if (!$walletService->canAcceptTransaction($task->getWallet(),$task->getAmount())) {
+            if (!$walletService->canAcceptTransaction($task->getWallet(), $task->getAmount())) {
                 $this->addFlash(
                     'warning',
                     $this->translator->trans('message.transaction_not_possible')
                 );
 
-                return $this->render('transaction/create.html.twig',  ['form' => $form->createView()]);
+                return $this->render('transaction/create.html.twig', ['form' => $form->createView()]);
             }
 
             $this->taskService->save($task);
@@ -138,36 +135,34 @@ class TaskController extends AbstractController
                 $this->translator->trans('message.created_successfully')
             );
 
-//            if ($wallet !== null) {
-//                return $this->redirectToRoute($referer);
-//            }
+            //            if ($wallet !== null) {
+            //                return $this->redirectToRoute($referer);
+            //            }
 
             return $this->redirectToRoute('transaction_index');
-
         }
 
         return $this->render('transaction/create.html.twig',
             [
                 'form' => $form->createView(),
                 'referer' => $referer,
-                'wallet_id' => $wallet !== null ? $wallet : null,
+                'wallet_id' => null !== $wallet ? $wallet : null,
             ]
         );
     }
 
-
     /**
      * Edit action.
      *
-     * @param Request $request HTTP request
-     * @param Task    $task    Task entity
+     * @param Request       $request       HTTP request
+     * @param Task          $task          Task entity
      * @param WalletService $walletService WalletService
+     *
      * @return Response HTTP response
      */
     #[Route('/{id}/edit', name: 'transaction_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
     public function edit(Request $request, Task $task, WalletService $walletService): Response
     {
-
         $form = $this->createForm(
             TaskType::class,
             $task,
@@ -261,5 +256,4 @@ class TaskController extends AbstractController
             ]
         );
     }
-
 }

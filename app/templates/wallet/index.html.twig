@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <section class="gradient-custom">
+    <section class="gradient-custom py-5 min-vh-100 d-flex justify-content-center align-items-center">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-12">
@@ -30,7 +30,7 @@
                                             <td>{{ wallet.type }}</td>
                                             <td>{{ wallet.balance|number_format(2, ',', ' ') }} PLN</td>
                                             <td>
-                                                <a href="{{ url('wallet_show', {id: wallet.id}) }}" title="{{ 'action.view'|trans }}" class="btn btn-primary">
+                                                <a href="{{ url('wallet_show', {id: wallet.id}) }}" title="{{ 'action.view'|trans }}" class="btn btn-outline-primary">
                                                     {{ 'action.view'|trans }}
                                                 </a>
                                             </td>

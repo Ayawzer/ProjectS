@@ -1,7 +1,4 @@
 <?php
-/**
- * Category controller.
- */
 
 namespace App\Controller;
 
@@ -15,9 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * Class CategoryController.
- */
 #[Route('/category')]
 class CategoryController extends AbstractController
 {
@@ -25,6 +19,7 @@ class CategoryController extends AbstractController
      * Category service.
      */
     private CategoryServiceInterface $categoryService;
+
     /**
      * Translator.
      */
