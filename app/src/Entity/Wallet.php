@@ -23,8 +23,6 @@ class Wallet
 {
     /**
      * Primary key.
-     *
-     * @var int|null
      */
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -33,8 +31,6 @@ class Wallet
 
     /**
      * Type.
-     *
-     * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\Type('string')]
@@ -44,8 +40,6 @@ class Wallet
 
     /**
      * Balance.
-     *
-     * @var float|null
      */
     #[ORM\Column(type: Types::FLOAT)]
     #[Assert\Type('float')]
@@ -54,8 +48,6 @@ class Wallet
 
     /**
      * Title.
-     *
-     * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\Type('string')]
@@ -63,20 +55,24 @@ class Wallet
     #[Assert\Length(min: 3, max: 64)]
     private ?string $title = null;
 
+    /**
+     * ArrayCollection.
+     */
+    #[ORM\OneToMany(mappedBy: 'wallet', targetEntity: Task::class, fetch: 'EXTRA_LAZY')]
+    private Collection $transactions;
 
-    #[ORM\OneToMany(targetEntity: Task::class, fetch: "EXTRA_LAZY", mappedBy: 'wallet' )]
-    private $transactions;
-
-    // Initialize the $transactions property as a Doctrine Collection in the Wallet's constructor.
-
-    public function __construct() {
+    /**
+     * Constructor for ArrayCollection.
+     */
+    public function __construct()
+    {
         $this->transactions = new ArrayCollection();
     }
 
-    // Add a getter method for the transactions.
-
     /**
-     * @return Collection|Task[]
+     * Getter for Collection.
+     *
+     * @return Collection Collection
      */
     public function getTransactions(): Collection
     {
@@ -107,6 +103,8 @@ class Wallet
      * Setter for type.
      *
      * @param string|null $type Type
+     *
+     * @return Wallet Type
      */
     public function setType(?string $type): self
     {
@@ -118,9 +116,9 @@ class Wallet
     /**
      * Getter for balance.
      *
-     * @return string|null Balance
+     * @return float|null Balance
      */
-    public function getBalance(): float
+    public function getBalance(): ?float
     {
         $balance = 0.0;
         foreach ($this->transactions as $transaction) {
@@ -130,11 +128,12 @@ class Wallet
         return $balance;
     }
 
-
     /**
      * Setter for balance.
      *
      * @param string|null $balance Balance
+     *
+     * @return Wallet Balance
      */
     public function setBalance(?string $balance): self
     {
@@ -143,16 +142,27 @@ class Wallet
         return $this;
     }
 
+    /**
+     * Getter for title.
+     *
+     * @return string|null Title
+     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    /**
+     * Setter for title.
+     *
+     * @param string|null $title Title
+     *
+     * @return Wallet Title
+     */
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
         return $this;
     }
 }
-

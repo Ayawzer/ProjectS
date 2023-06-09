@@ -6,6 +6,7 @@
 namespace App\Controller;
 
 use App\Entity\Task;
+use App\Entity\Wallet;
 use App\Form\Type\TaskType;
 use App\Repository\WalletRepository;
 use App\Service\TaskServiceInterface;
@@ -41,8 +42,9 @@ class TaskController extends AbstractController
     /**
      * Constructor.
      *
-     * @param TaskServiceInterface $taskService Task service
-     * @param TranslatorInterface  $translator  Translator
+     * @param TaskServiceInterface $taskService      Task service
+     * @param TranslatorInterface  $translator       Translator
+     * @param WalletRepository     $walletRepository Wallet Repository
      */
     public function __construct(TaskServiceInterface $taskService, TranslatorInterface $translator, WalletRepository $walletRepository)
     {
@@ -71,31 +73,16 @@ class TaskController extends AbstractController
     }
 
     /**
-     * Get filters from request.
-     *
-     * @param Request $request HTTP request
-     *
-     * @return array<string, int> Array of filters
-     *
-     * @psalm-return array{category_id: int}
-     */
-    private function getFilters(Request $request): array
-    {
-        $filters = [];
-        $filters['category_id'] = $request->query->getInt('filters_category_id');
-
-        return $filters;
-    }
-
-    /**
      * Create action.
      *
-     * @param Request $request HTTP request
+     * @param Request       $request       HTTP request
+     * @param WalletService $walletService Wallet Service
+     * @param Wallet|null   $wallet        Wallet
      *
      * @return Response HTTP response
      */
-    #[Route('/create/{wallet?}', name: 'transaction_create', methods: 'GET|POST', )]
-    public function create(Request $request, WalletService $walletService, $wallet = null): Response
+    #[Route('/create/{wallet?}', name: 'transaction_create', methods: 'GET|POST')]
+    public function create(Request $request, WalletService $walletService, Wallet $wallet = null): Response
     {
         $task = new Task();
 
@@ -135,14 +122,11 @@ class TaskController extends AbstractController
                 $this->translator->trans('message.created_successfully')
             );
 
-            //            if ($wallet !== null) {
-            //                return $this->redirectToRoute($referer);
-            //            }
-
             return $this->redirectToRoute('transaction_index');
         }
 
-        return $this->render('transaction/create.html.twig',
+        return $this->render(
+            'transaction/create.html.twig',
             [
                 'form' => $form->createView(),
                 'referer' => $referer,
@@ -209,8 +193,9 @@ class TaskController extends AbstractController
     /**
      * Delete action.
      *
-     * @param Request $request HTTP request
-     * @param Task    $task    Task entity
+     * @param Request       $request       HTTP request
+     * @param Task          $task          Task entity
+     * @param WalletService $walletService Wallet Service
      *
      * @return Response HTTP response
      */
@@ -255,5 +240,22 @@ class TaskController extends AbstractController
                 'referer' => $referer,
             ]
         );
+    }
+
+    /**
+     * Get filters from request.
+     *
+     * @param Request $request HTTP request
+     *
+     * @return array<string, int> Array of filters
+     *
+     * @psalm-return array{category_id: int}
+     */
+    private function getFilters(Request $request): array
+    {
+        $filters = [];
+        $filters['category_id'] = $request->query->getInt('filters_category_id');
+
+        return $filters;
     }
 }

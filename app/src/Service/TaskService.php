@@ -55,10 +55,11 @@ class TaskService implements TaskServiceInterface
     /**
      * Get paginated list.
      *
-     * @param int $page Page number
+     * @param int                $page    Page number
      * @param array<string, int> $filters Filters array
      *
      * @return PaginationInterface<string, mixed> Paginated list
+     *
      * @throws NonUniqueResultException
      */
     public function getPaginatedList(int $page, array $filters = []): PaginationInterface
@@ -68,20 +69,21 @@ class TaskService implements TaskServiceInterface
         return $this->paginator->paginate(
             $this->taskRepository->queryNotAll($filters),
             $page,
-            TaskRepository::PAGINATOR_ITEMS_PER_PAGE_TASK
+            TaskRepository::PAGINATOR_ITEMS_PER_PAGE
         );
     }
 
     /**
      * Save entity.
      *
-     * @param Task $task Task entity
+     * @param Task       $task                      Task entity
+     * @param float|null $originalTransactionAmount Original Transaction Amount
      */
     public function save(Task $task, ?float $originalTransactionAmount = null): void
     {
         $this->walletService->updateBalance($task->getWallet(), $task->getAmount());
         $balance = $task->getWallet()->getBalance();
-        if ($originalTransactionAmount !== null) {
+        if (null !== $originalTransactionAmount) {
             $task->setBalanceAfterTransaction($balance);
         } else {
             $task->setBalanceAfterTransaction($balance + $task->getAmount());
@@ -105,6 +107,7 @@ class TaskService implements TaskServiceInterface
      * @param array<string, int> $filters Raw filters from request
      *
      * @return array<string, object> Result array of filters
+     *
      * @throws NonUniqueResultException
      */
     private function prepareFilters(array $filters): array
@@ -116,7 +119,7 @@ class TaskService implements TaskServiceInterface
                 $resultFilters['category'] = $category;
             }
         }
+
         return $resultFilters;
     }
-
 }

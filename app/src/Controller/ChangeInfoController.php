@@ -1,4 +1,7 @@
 <?php
+/**
+ * Change info controller.
+ */
 
 namespace App\Controller;
 
@@ -13,6 +16,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Class ChangeInfoController.
+ */
 class ChangeInfoController extends AbstractController
 {
     /**
@@ -25,12 +31,25 @@ class ChangeInfoController extends AbstractController
      */
     private TranslatorInterface $translator;
 
+    /**
+     * Constructor.
+     *
+     * @param EntityManagerInterface $entityManager Entity Manager
+     * @param TranslatorInterface    $translator    Translator
+     */
     public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->translator = $translator;
     }
 
+    /**
+     * ChangeEmail action.
+     *
+     * @param Request $request HTTP request
+     *
+     * @return Response HTTP response
+     */
     #[Route('/change-email', name: 'user_change_email', methods: 'GET|POST')]
     public function changeEmail(Request $request): Response
     {

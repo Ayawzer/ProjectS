@@ -13,13 +13,24 @@ use Doctrine\ORM\NoResultException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
+/**
+ * Class CategoryService.
+ */
 class CategoryService implements CategoryServiceInterface
 {
     /**
      * Paginator.
      */
     private PaginatorInterface $paginator;
+
+    /**
+     * Category repository.
+     */
     private CategoryRepository $categoryRepository;
+
+    /**
+     * Task repository.
+     */
     private TaskRepository $taskRepository;
 
     /**
@@ -48,7 +59,7 @@ class CategoryService implements CategoryServiceInterface
         return $this->paginator->paginate(
             $this->categoryRepository->queryAll(),
             $page,
-            TaskRepository::PAGINATOR_ITEMS_PER_PAGE_CATEGORY
+            TaskRepository::PAGINATOR_ITEMS_PER_PAGE
         );
     }
 
@@ -63,14 +74,13 @@ class CategoryService implements CategoryServiceInterface
     }
 
     /**
-     * @param Category $category
-     * @return void
+     * Delete entity.
+     *
+     * @param Category $category Category
      */
     public function delete(Category $category): void
     {
-        if (!null == $category->getId()) {
-            $this->categoryRepository->delete($category);
-        }
+        $this->categoryRepository->delete($category);
     }
 
     /**
@@ -104,5 +114,4 @@ class CategoryService implements CategoryServiceInterface
     {
         return $this->categoryRepository->findOneById($id);
     }
-
 }

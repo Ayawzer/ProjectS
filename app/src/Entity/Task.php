@@ -11,13 +11,11 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class Task.
  *
  * @psalm-suppress MissingConstructor
- *
  */
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ORM\Table(name: 'transactions')]
@@ -25,8 +23,6 @@ class Task
 {
     /**
      * Primary key.
-     *
-     * @var int|null
      */
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -35,28 +31,22 @@ class Task
 
     /**
      * Created at.
-     *
-     * @var DateTimeImmutable|null
      */
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Assert\Type(DateTimeImmutable::class)]
+    #[Assert\Type(\DateTimeImmutable::class)]
     #[Gedmo\Timestampable(on: 'create')]
-    private ?DateTimeImmutable $createdAt;
+    private ?\DateTimeImmutable $createdAt;
 
     /**
      * Updated at.
-     *
-     * @var DateTimeImmutable|null
      */
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Assert\Type(DateTimeImmutable::class)]
+    #[Assert\Type(\DateTimeImmutable::class)]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?DateTimeImmutable $updatedAt;
+    private ?\DateTimeImmutable $updatedAt;
 
     /**
      * Title.
-     *
-     * @var string|null
      */
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\Type('string')]
@@ -66,33 +56,52 @@ class Task
 
     /**
      * Category.
-     *
-     * @var Category
      */
-    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: "transactions",fetch: "EXTRA_LAZY")]
+    #[ORM\ManyToOne(targetEntity: Category::class, fetch: 'EXTRA_LAZY', inversedBy: 'transactions')]
     #[Assert\NotBlank]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
+    /**
+     * Amount.
+     */
     #[ORM\Column(type: Types::FLOAT)]
     #[Assert\NotBlank]
     private ?string $amount = null;
 
-    #[ORM\ManyToOne(targetEntity: Wallet::class, inversedBy: "transactions", fetch: "EXTRA_LAZY")]
+    /**
+     * Wallet.
+     */
+    #[ORM\ManyToOne(targetEntity: Wallet::class, fetch: 'EXTRA_LAZY', inversedBy: 'transactions')]
     #[Assert\NotBlank]
     #[ORM\JoinColumn(nullable: false)]
     private ?Wallet $wallet = null;
 
+    /**
+     * BalanceAfterTransaction.
+     */
     #[ORM\Column(type: Types::FLOAT)]
-    private $balanceAfterTransaction;
+    private ?float $balanceAfterTransaction;
 
-    public function setBalanceAfterTransaction($balanceAfterTransaction): self
+    /**
+     * Setter for balanceAfterTransaction.
+     *
+     * @param float|null $balanceAfterTransaction BalanceAfterTransaction
+     *
+     * @return Task BalanceAfterTransaction
+     */
+    public function setBalanceAfterTransaction(?float $balanceAfterTransaction): self
     {
         $this->balanceAfterTransaction = $balanceAfterTransaction;
 
         return $this;
     }
 
+    /**
+     * Getter for balanceAfterTransaction.
+     *
+     * @return float|null BalanceAfterTransaction
+     */
     public function getBalanceAfterTransaction(): ?float
     {
         return $this->balanceAfterTransaction;
@@ -111,42 +120,22 @@ class Task
     /**
      * Getter for created at.
      *
-     * @return DateTimeImmutable|null Created at
+     * @return \DateTimeImmutable|null Created at
      */
-    public function getCreatedAt(): ?DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-//    /**
-//     * Setter for created at.
-//     *
-//     * @param DateTimeImmutable|null $createdAt Created at
-//     */
-//    public function setCreatedAt(?DateTimeImmutable $createdAt): void
-//    {
-//        $this->createdAt = $createdAt;
-//    }
-
     /**
      * Getter for updated at.
      *
-     * @return DateTimeImmutable|null Updated at
+     * @return \DateTimeImmutable|null Updated at
      */
-    public function getUpdatedAt(): ?DateTimeImmutable
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }
-
-//    /**
-//     * Setter for updated at.
-//     *
-//     * @param DateTimeImmutable|null $updatedAt Updated at
-//     */
-//    public function setUpdatedAt(?DateTimeImmutable $updatedAt): void
-//    {
-//        $this->updatedAt = $updatedAt;
-//    }
 
     /**
      * Getter for title.
@@ -169,7 +158,7 @@ class Task
     }
 
     /**
-     * Getter for category
+     * Getter for category.
      *
      * @return Category|null Category
      */
@@ -179,9 +168,11 @@ class Task
     }
 
     /**
-     * Setter for category
+     * Setter for category.
      *
      * @param Category|null $category Category
+     *
+     * @return Task Category
      */
     public function setCategory(?Category $category): self
     {
@@ -190,23 +181,47 @@ class Task
         return $this;
     }
 
+    /**
+     * Getter for amount.
+     *
+     * @return string|null Amount
+     */
     public function getAmount(): ?string
     {
         return $this->amount;
     }
 
-    public function setAmount(string $amount): self
+    /**
+     * Setter for amount.
+     *
+     * @param string|null $amount Amount
+     *
+     * @return Task Amount
+     */
+    public function setAmount(?string $amount): self
     {
         $this->amount = $amount;
 
         return $this;
     }
 
+    /**
+     * Getter for wallet.
+     *
+     * @return Wallet|null Wallet
+     */
     public function getWallet(): ?Wallet
     {
         return $this->wallet;
     }
 
+    /**
+     * Setter for wallet.
+     *
+     * @param Wallet|null $wallet Wallet
+     *
+     * @return Task Wallet
+     */
     public function setWallet(?Wallet $wallet): self
     {
         $this->wallet = $wallet;
@@ -214,4 +229,3 @@ class Task
         return $this;
     }
 }
-

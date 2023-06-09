@@ -1,4 +1,7 @@
 <?php
+/**
+ * Change password controller.
+ */
 
 namespace App\Controller;
 
@@ -15,6 +18,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Class ChangePasswordController.
+ */
 class ChangePasswordController extends AbstractController
 {
     /**
@@ -27,6 +33,12 @@ class ChangePasswordController extends AbstractController
      */
     private TranslatorInterface $translator;
 
+    /**
+     * Constructor.
+     *
+     * @param EntityManagerInterface $entityManager Entity Manager
+     * @param TranslatorInterface    $translator    Translator
+     */
     public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
@@ -36,7 +48,8 @@ class ChangePasswordController extends AbstractController
     /**
      * ChangePassword action.
      *
-     * @param Request $request HTTP Request
+     * @param Request                     $request        HTTP Request
+     * @param UserPasswordHasherInterface $passwordHasher Password Hasher
      *
      * @return Response HTTP response
      */

@@ -57,7 +57,7 @@ class WalletType extends AbstractType
                 'required' => true,
                 'scale' => 2,
                 'attr' => [
-                    'min' => 0.00
+                    'min' => 0.00,
                 ],
             ]
         );

@@ -8,6 +8,9 @@ namespace App\Service;
 use App\Entity\Wallet;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 
+/**
+ * Interface WalletServiceInterface.
+ */
 interface WalletServiceInterface
 {
     /**
@@ -42,4 +45,14 @@ interface WalletServiceInterface
      */
     public function canBeDeleted(Wallet $wallet): bool;
 
+    /**
+     * Can Wallet accept transaction?
+     *
+     * @param Wallet     $wallet                    Wallet
+     * @param float      $transactionAmount         Transaction Amount
+     * @param float|null $originalTransactionAmount Original Transaction Amount
+     *
+     * @return bool Result
+     */
+    public function canAcceptTransaction(Wallet $wallet, float $transactionAmount, ?float $originalTransactionAmount = null): bool;
 }

@@ -7,7 +7,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Category;
 use App\Entity\Wallet;
-//use App\Entity\Enum\TaskStatus;
+// use App\Entity\Enum\TaskStatus;
 use App\Entity\Task;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
@@ -42,7 +42,6 @@ class TaskFixtures extends AbstractBaseFixtures implements DependentFixtureInter
             $wallet = $this->getRandomReference('wallet');
             $task->setWallet($wallet);
 
-
             return $task;
         });
 
@@ -61,6 +60,4 @@ class TaskFixtures extends AbstractBaseFixtures implements DependentFixtureInter
     {
         return [CategoryFixtures::class, WalletFixtures::class];
     }
-
-
 }

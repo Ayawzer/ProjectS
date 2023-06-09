@@ -35,9 +35,7 @@ class TaskRepository extends ServiceEntityRepository
      *
      * @constant int
      */
-    public const PAGINATOR_ITEMS_PER_PAGE_TASK = 10;
-    public const PAGINATOR_ITEMS_PER_PAGE_CATEGORY = 10;
-    public const PAGINATOR_ITEMS_PER_PAGE_WALLET = 10;
+    public const PAGINATOR_ITEMS_PER_PAGE = 10;
 
     /**
      * Constructor.
@@ -49,15 +47,22 @@ class TaskRepository extends ServiceEntityRepository
         parent::__construct($registry, Task::class);
     }
 
+    /**
+     * Query filtered all records.
+     *
+     * @param array $filters Filters
+     *
+     * @return QueryBuilder Query builder
+     */
     public function queryNotAll(array $filters = []): QueryBuilder
     {
-        $queryBuilder = $this->queryAll($filters);
-
-        return $queryBuilder;
+        return $this->queryAll($filters);
     }
 
     /**
      * Query all records.
+     *
+     * @param array $filters Filters
      *
      * @return QueryBuilder Query builder
      */
@@ -68,31 +73,12 @@ class TaskRepository extends ServiceEntityRepository
                 'partial transaction.{id, createdAt, updatedAt, title, amount}',
                 'partial category.{id, title}',
                 'partial wallet.{id, title}'
-
             )
             ->join('transaction.category', 'category')
             ->join('transaction.wallet', 'wallet')
             ->orderBy('transaction.updatedAt', 'DESC');
 
         return $this->applyFiltersToList($queryBuilder, $filters);
-    }
-
-    /**
-     * Apply filters to paginated list.
-     *
-     * @param QueryBuilder          $queryBuilder Query builder
-     * @param array<string, object> $filters      Filters array
-     *
-     * @return QueryBuilder Query builder
-     */
-    private function applyFiltersToList(QueryBuilder $queryBuilder, array $filters = []): QueryBuilder
-    {
-        if (isset($filters['category']) && $filters['category'] instanceof Category) {
-            $queryBuilder->andWhere('category = :category')
-                ->setParameter('category', $filters['category']);
-        }
-
-        return $queryBuilder;
     }
 
     /**
@@ -160,24 +146,20 @@ class TaskRepository extends ServiceEntityRepository
     }
 
     /**
-     * Get or create new query builder.
+     * Find transactions by date range.
      *
-     * @param QueryBuilder|null $queryBuilder Query builder
+     * @param Wallet                  $wallet   Wallet
+     * @param \DateTimeInterface|null $dateFrom DateFrom
+     * @param \DateTimeInterface|null $dateTo   DateTo
      *
-     * @return QueryBuilder Query builder
+     * @return float|int|mixed|string
      */
-    private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
-    {
-        return $queryBuilder ?? $this->createQueryBuilder('transaction');
-    }
-
-    public function findTransactionsForWalletByDateRange(Wallet $wallet, ?\DateTimeInterface $dateFrom, ?\DateTimeInterface $dateTo)
+    public function findTransactionsForWalletByDateRange(Wallet $wallet, ?\DateTimeInterface $dateFrom, ?\DateTimeInterface $dateTo): mixed
     {
         $qb = $this->createQueryBuilder('t')
             ->where('t.wallet = :wallet')
             ->setParameter('wallet', $wallet)
             ->orderBy('t.createdAt', 'DESC');
-
 
         if ($dateFrom) {
             $qb->andWhere('t.createdAt >= :dateFrom')
@@ -192,5 +174,33 @@ class TaskRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * Get or create new query builder.
+     *
+     * @param QueryBuilder|null $queryBuilder Query builder
+     *
+     * @return QueryBuilder Query builder
+     */
+    private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
+    {
+        return $queryBuilder ?? $this->createQueryBuilder('transaction');
+    }
 
+    /**
+     * Apply filters to paginated list.
+     *
+     * @param QueryBuilder          $queryBuilder Query builder
+     * @param array<string, object> $filters      Filters array
+     *
+     * @return QueryBuilder Query builder
+     */
+    private function applyFiltersToList(QueryBuilder $queryBuilder, array $filters = []): QueryBuilder
+    {
+        if (isset($filters['category']) && $filters['category'] instanceof Category) {
+            $queryBuilder->andWhere('category = :category')
+                ->setParameter('category', $filters['category']);
+        }
+
+        return $queryBuilder;
+    }
 }

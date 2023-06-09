@@ -65,8 +65,9 @@ class WalletController extends AbstractController
     /**
      * Show action.
      *
-     * @param Request $request HTTP Request
-     * @param Wallet  $wallet  Wallet entity
+     * @param Request        $request        HTTP Request
+     * @param Wallet         $wallet         Wallet entity
+     * @param TaskRepository $taskRepository Task Repository
      *
      * @return Response HTTP response
      */
@@ -92,6 +93,13 @@ class WalletController extends AbstractController
         ]);
     }
 
+    /**
+     * Create action.
+     *
+     * @param Request $request Request
+     *
+     * @return Response HTTP response
+     */
     #[Route('/create', name: 'wallet_create', methods: 'GET|POST')]
     public function create(Request $request): Response
     {
@@ -121,6 +129,14 @@ class WalletController extends AbstractController
         );
     }
 
+    /**
+     * Delete action.
+     *
+     * @param Request $request HTTP request
+     * @param Wallet  $wallet  Wallet
+     *
+     * @return Response HTTP response
+     */
     #[Route('/{id}/delete', name: 'wallet_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
     public function delete(Request $request, Wallet $wallet): Response
     {

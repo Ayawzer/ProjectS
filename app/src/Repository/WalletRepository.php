@@ -1,4 +1,7 @@
 <?php
+/**
+ * Wallet repository.
+ */
 
 namespace App\Repository;
 
@@ -8,15 +11,22 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Wallet>
+ * Class WalletRepository.
  *
  * @method Wallet|null find($id, $lockMode = null, $lockVersion = null)
  * @method Wallet|null findOneBy(array $criteria, array $orderBy = null)
  * @method Wallet[]    findAll()
  * @method Wallet[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ *
+ * @extends ServiceEntityRepository<Wallet>
  */
 class WalletRepository extends ServiceEntityRepository
 {
+    /**
+     * Constructor.
+     *
+     * @param ManagerRegistry $registry Manager registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Wallet::class);
@@ -36,19 +46,6 @@ class WalletRepository extends ServiceEntityRepository
             )
             ->leftJoin('wallet.transactions', 'transactions')
             ->orderBy('wallet.title', 'ASC');
-    }
-
-
-    /**
-     * Get or create new query builder.
-     *
-     * @param QueryBuilder|null $queryBuilder Query builder
-     *
-     * @return QueryBuilder Query builder
-     */
-    private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
-    {
-        return $queryBuilder ?? $this->createQueryBuilder('wallet');
     }
 
     /**
@@ -71,5 +68,17 @@ class WalletRepository extends ServiceEntityRepository
     {
         $this->_em->remove($wallet);
         $this->_em->flush();
+    }
+
+    /**
+     * Get or create new query builder.
+     *
+     * @param QueryBuilder|null $queryBuilder Query builder
+     *
+     * @return QueryBuilder Query builder
+     */
+    private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
+    {
+        return $queryBuilder ?? $this->createQueryBuilder('wallet');
     }
 }

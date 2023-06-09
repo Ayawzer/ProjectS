@@ -5,7 +5,6 @@
 
 namespace App\Service;
 
-
 use App\Entity\Wallet;
 use App\Repository\WalletRepository;
 use App\Repository\TaskRepository;
@@ -14,6 +13,9 @@ use Doctrine\ORM\NoResultException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
+/**
+ * Class WalletService.
+ */
 class WalletService implements WalletServiceInterface
 {
     /**
@@ -26,14 +28,17 @@ class WalletService implements WalletServiceInterface
      */
     private WalletRepository $walletRepository;
 
+    /**
+     * Task repository.
+     */
     private TaskRepository $taskRepository;
 
     /**
      * Constructor.
      *
-     * @param WalletRepository   $walletRepository   Wallet repository
-     * @param PaginatorInterface $paginator          Paginator
-     * @param TaskRepository     $taskRepository     Task repository
+     * @param WalletRepository   $walletRepository Wallet repository
+     * @param PaginatorInterface $paginator        Paginator
+     * @param TaskRepository     $taskRepository   Task repository
      */
     public function __construct(WalletRepository $walletRepository, PaginatorInterface $paginator, TaskRepository $taskRepository)
     {
@@ -54,7 +59,7 @@ class WalletService implements WalletServiceInterface
         return $this->paginator->paginate(
             $this->walletRepository->queryAll(),
             $page,
-            TaskRepository::PAGINATOR_ITEMS_PER_PAGE_WALLET
+            TaskRepository::PAGINATOR_ITEMS_PER_PAGE
         );
     }
 
@@ -76,12 +81,21 @@ class WalletService implements WalletServiceInterface
         }
     }
 
+    /**
+     * Can Wallet accept transaction?
+     *
+     * @param Wallet     $wallet                    Wallet
+     * @param float      $transactionAmount         TransactionAmount
+     * @param float|null $originalTransactionAmount OriginalTransactionAmount
+     *
+     * @return bool Result
+     */
     public function canAcceptTransaction(Wallet $wallet, float $transactionAmount, ?float $originalTransactionAmount = null): bool
     {
         $balance = $wallet->getBalance();
 
         // If originalTransactionAmount is provided, add it back to the balance
-        if ($originalTransactionAmount !== null) {
+        if (null !== $originalTransactionAmount) {
             $balance += abs($originalTransactionAmount);
         }
 
@@ -94,12 +108,11 @@ class WalletService implements WalletServiceInterface
         return true;
     }
 
-
     /**
      * Update the balance of a wallet based on a transaction amount.
      *
-     * @param Wallet $wallet The wallet to update.
-     * @param float $amount The amount of the transaction.
+     * @param Wallet $wallet the wallet to update
+     * @param float  $amount the amount of the transaction
      */
     public function updateBalance(Wallet $wallet, float $amount): void
     {
@@ -124,8 +137,6 @@ class WalletService implements WalletServiceInterface
      */
     public function delete(Wallet $wallet): void
     {
-        if (!null == $wallet->getId()) {
-            $this->walletRepository->delete($wallet);
-        }
+        $this->walletRepository->delete($wallet);
     }
 }
