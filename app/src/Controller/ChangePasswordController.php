@@ -8,12 +8,11 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\Type\ChangePasswordType;
 use App\Model\ChangePasswordModel;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\ChangePasswordService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -26,7 +25,7 @@ class ChangePasswordController extends AbstractController
     /**
      * Entity manager.
      */
-    private EntityManagerInterface $entityManager;
+    private ChangePasswordService $changePasswordService;
 
     /**
      * Translator.
@@ -36,29 +35,27 @@ class ChangePasswordController extends AbstractController
     /**
      * Constructor.
      *
-     * @param EntityManagerInterface $entityManager Entity Manager
-     * @param TranslatorInterface    $translator    Translator
+     * @param ChangePasswordService $changePasswordService Change Password Service
+     * @param TranslatorInterface   $translator            Translator
      */
-    public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
+    public function __construct(ChangePasswordService $changePasswordService, TranslatorInterface $translator)
     {
-        $this->entityManager = $entityManager;
+        $this->changePasswordService = $changePasswordService;
         $this->translator = $translator;
     }
 
     /**
      * ChangePassword action.
      *
-     * @param Request                     $request        HTTP Request
-     * @param UserPasswordHasherInterface $passwordHasher Password Hasher
+     * @param Request $request HTTP Request
      *
      * @return Response HTTP response
      */
     #[Route('/change-password', name: 'user_change_password', methods: 'GET|POST')]
-    public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher): Response
+    public function changePassword(Request $request): Response
     {
         $user = $this->getUser();
 
-        // Not logged in, cannot change password
         if (!$user instanceof User) {
             throw new AccessDeniedException();
         }
@@ -68,21 +65,14 @@ class ChangePasswordController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Check if old password is valid
-            if (!$passwordHasher->isPasswordValid($user, $changePasswordModel->getOldPassword())) {
-                $form->addError(new FormError($this->translator->trans('message.password_incorrect')));
-            } else {
-                $newPassword = $passwordHasher->hashPassword($user, $changePasswordModel->getNewPassword());
-                $user->setPassword($newPassword);
+            try {
+                $this->changePasswordService->changePassword($user, $changePasswordModel);
 
-                $this->entityManager->flush();
-
-                $this->addFlash(
-                    'success',
-                    $this->translator->trans('message.password_changed')
-                );
+                $this->addFlash('success', $this->translator->trans('message.password_changed'));
 
                 return $this->redirectToRoute('wallet_index');
+            } catch (\Exception $e) {
+                $form->addError(new FormError($e->getMessage()));
             }
         }
 

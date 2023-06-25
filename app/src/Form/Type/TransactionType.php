@@ -1,12 +1,12 @@
 <?php
 /**
- * Task type.
+ * Transaction type.
  */
 
 namespace App\Form\Type;
 
 use App\Entity\Category;
-use App\Entity\Task;
+use App\Entity\Transaction;
 use App\Entity\Wallet;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -16,9 +16,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class TaskType.
+ * Class TransactionType.
  */
-class TaskType extends AbstractType
+class TransactionType extends AbstractType
 {
     /**
      * Builds the form.
@@ -84,7 +84,7 @@ class TaskType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['data_class' => Task::class]);
+        $resolver->setDefaults(['data_class' => Transaction::class]);
     }
 
     /**

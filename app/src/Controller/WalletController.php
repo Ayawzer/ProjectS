@@ -8,7 +8,7 @@ namespace App\Controller;
 use App\Entity\Wallet;
 use App\Form\Type\TransactionFilterType;
 use App\Form\Type\WalletType;
-use App\Repository\TaskRepository;
+use App\Repository\TransactionRepository;
 use App\Service\WalletServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -65,14 +65,14 @@ class WalletController extends AbstractController
     /**
      * Show action.
      *
-     * @param Request        $request        HTTP Request
-     * @param Wallet         $wallet         Wallet entity
-     * @param TaskRepository $taskRepository Task Repository
+     * @param Request               $request               HTTP Request
+     * @param Wallet                $wallet                Wallet entity
+     * @param TransactionRepository $transactionRepository Transaction Repository
      *
      * @return Response HTTP response
      */
     #[Route('/{id}', name: 'wallet_show', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'POST'])]
-    public function show(Request $request, Wallet $wallet, TaskRepository $taskRepository): Response
+    public function show(Request $request, Wallet $wallet, TransactionRepository $transactionRepository): Response
     {
         $filterForm = $this->createForm(TransactionFilterType::class);
         $filterForm->handleRequest($request);
@@ -81,7 +81,7 @@ class WalletController extends AbstractController
             $dateFrom = $filterForm->get('dateFrom')->getData();
             $dateTo = $filterForm->get('dateTo')->getData();
 
-            $transactions = $taskRepository->findTransactionsForWalletByDateRange($wallet, $dateFrom, $dateTo);
+            $transactions = $transactionRepository->findTransactionsForWalletByDateRange($wallet, $dateFrom, $dateTo);
         } else {
             $transactions = $wallet->getTransactions();
         }

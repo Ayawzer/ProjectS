@@ -1,6 +1,6 @@
 <?php
 /**
- * Task fixtures.
+ * Transaction fixtures.
  */
 
 namespace App\DataFixtures;
@@ -8,13 +8,13 @@ namespace App\DataFixtures;
 use App\Entity\Category;
 use App\Entity\Wallet;
 // use App\Entity\Enum\TaskStatus;
-use App\Entity\Task;
+use App\Entity\Transaction;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 /**
- * Class TaskFixtures.
+ * Class TransactionFixtures.
  */
-class TaskFixtures extends AbstractBaseFixtures implements DependentFixtureInterface
+class TransactionFixtures extends AbstractBaseFixtures implements DependentFixtureInterface
 {
     /**
      * Load data.
@@ -30,7 +30,7 @@ class TaskFixtures extends AbstractBaseFixtures implements DependentFixtureInter
         }
 
         $this->createMany(100, 'tasks', function (int $i) {
-            $task = new Task();
+            $task = new Transaction();
             $task->setTitle($this->faker->sentence);
             $task->setAmount($this->faker->randomDigitNotNull());
             $task->setBalanceAfterTransaction($this->faker->randomDigitNotNull());

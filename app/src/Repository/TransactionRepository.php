@@ -1,12 +1,12 @@
 <?php
 /**
- * Task repository.
+ * Transaction repository.
  */
 
 namespace App\Repository;
 
 use App\Entity\Category;
-use App\Entity\Task;
+use App\Entity\Transaction;
 use App\Entity\Wallet;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -15,16 +15,16 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Class TaskRepository.
+ * Class TransactionRepository.
  *
- * @method Task|null find($id, $lockMode = null, $lockVersion = null)
- * @method Task|null findOneBy(array $criteria, array $orderBy = null)
- * @method Task[]    findAll()
- * @method Task[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Transaction|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Transaction|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Transaction[]    findAll()
+ * @method Transaction[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  *
- * @extends ServiceEntityRepository<Task>
+ * @extends ServiceEntityRepository<Transaction>
  */
-class TaskRepository extends ServiceEntityRepository
+class TransactionRepository extends ServiceEntityRepository
 {
     /**
      * Items per page.
@@ -44,7 +44,7 @@ class TaskRepository extends ServiceEntityRepository
      */
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Task::class);
+        parent::__construct($registry, Transaction::class);
     }
 
     /**
@@ -126,9 +126,9 @@ class TaskRepository extends ServiceEntityRepository
     /**
      * Save entity.
      *
-     * @param Task $task Task entity
+     * @param Transaction $task Transaction entity
      */
-    public function save(Task $task): void
+    public function save(Transaction $task): void
     {
         $this->_em->persist($task);
         $this->_em->flush();
@@ -137,9 +137,9 @@ class TaskRepository extends ServiceEntityRepository
     /**
      * Delete entity.
      *
-     * @param Task $task Task entity
+     * @param Transaction $task Transaction entity
      */
-    public function delete(Task $task): void
+    public function delete(Transaction $task): void
     {
         $this->_em->remove($task);
         $this->_em->flush();

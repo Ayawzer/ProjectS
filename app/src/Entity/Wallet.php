@@ -13,7 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 /**
- * Wallet Task.
+ * Wallet Transaction.
  *
  * @psalm-suppress MissingConstructor
  */
@@ -58,7 +58,7 @@ class Wallet
     /**
      * ArrayCollection.
      */
-    #[ORM\OneToMany(mappedBy: 'wallet', targetEntity: Task::class, fetch: 'EXTRA_LAZY')]
+    #[ORM\OneToMany(mappedBy: 'wallet', targetEntity: Transaction::class, fetch: 'EXTRA_LAZY')]
     private Collection $transactions;
 
     /**

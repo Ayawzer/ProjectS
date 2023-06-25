@@ -1,11 +1,11 @@
 <?php
 /**
- * Task entity.
+ * Transaction entity.
 */
 
 namespace App\Entity;
 
-use App\Repository\TaskRepository;
+use App\Repository\TransactionRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,13 +13,13 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class Task.
+ * Class Transaction.
  *
  * @psalm-suppress MissingConstructor
  */
-#[ORM\Entity(repositoryClass: TaskRepository::class)]
+#[ORM\Entity(repositoryClass: TransactionRepository::class)]
 #[ORM\Table(name: 'transactions')]
-class Task
+class Transaction
 {
     /**
      * Primary key.
@@ -88,7 +88,7 @@ class Task
      *
      * @param float|null $balanceAfterTransaction BalanceAfterTransaction
      *
-     * @return Task BalanceAfterTransaction
+     * @return Transaction BalanceAfterTransaction
      */
     public function setBalanceAfterTransaction(?float $balanceAfterTransaction): self
     {
@@ -172,7 +172,7 @@ class Task
      *
      * @param Category|null $category Category
      *
-     * @return Task Category
+     * @return Transaction Category
      */
     public function setCategory(?Category $category): self
     {
@@ -196,7 +196,7 @@ class Task
      *
      * @param string|null $amount Amount
      *
-     * @return Task Amount
+     * @return Transaction Amount
      */
     public function setAmount(?string $amount): self
     {
@@ -220,7 +220,7 @@ class Task
      *
      * @param Wallet|null $wallet Wallet
      *
-     * @return Task Wallet
+     * @return Transaction Wallet
      */
     public function setWallet(?Wallet $wallet): self
     {

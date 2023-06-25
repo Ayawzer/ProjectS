@@ -8,7 +8,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\Type\ChangeInfoType;
 use App\Model\ChangeInfoModel;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\ChangeInfoService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,9 +22,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ChangeInfoController extends AbstractController
 {
     /**
-     * Entity manager.
+     * Change info service.
      */
-    private EntityManagerInterface $entityManager;
+    private ChangeInfoService $changeInfoService;
 
     /**
      * Translator.
@@ -34,12 +34,12 @@ class ChangeInfoController extends AbstractController
     /**
      * Constructor.
      *
-     * @param EntityManagerInterface $entityManager Entity Manager
-     * @param TranslatorInterface    $translator    Translator
+     * @param ChangeInfoService   $changeInfoService Change Info Service
+     * @param TranslatorInterface $translator        Translator
      */
-    public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
+    public function __construct(ChangeInfoService $changeInfoService, TranslatorInterface $translator)
     {
-        $this->entityManager = $entityManager;
+        $this->changeInfoService = $changeInfoService;
         $this->translator = $translator;
     }
 
@@ -64,8 +64,7 @@ class ChangeInfoController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setEmail($changeEmailModel->getEmail());
-            $this->entityManager->flush();
+            $this->changeInfoService->changeInfo($user, $changeEmailModel);
 
             $this->addFlash(
                 'success',

@@ -1,25 +1,25 @@
 <?php
 /**
- * Task service.
+ * Transaction service.
  */
 
 namespace App\Service;
 
-use App\Entity\Task;
-use App\Repository\TaskRepository;
+use App\Entity\Transaction;
+use App\Repository\TransactionRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
 /**
- * Class TaskService.
+ * Class TransactionService.
  */
-class TaskService implements TaskServiceInterface
+class TransactionService implements TransactionServiceInterface
 {
     /**
-     * Task repository.
+     * Transaction repository.
      */
-    private TaskRepository $taskRepository;
+    private TransactionRepository $taskRepository;
 
     /**
      * Paginator.
@@ -39,12 +39,12 @@ class TaskService implements TaskServiceInterface
     /**
      * Constructor.
      *
-     * @param TaskRepository           $taskRepository  Task repository
+     * @param TransactionRepository    $taskRepository  Transaction repository
      * @param PaginatorInterface       $paginator       Paginator
      * @param WalletService            $walletService   Wallet service
      * @param CategoryServiceInterface $categoryService Category service
      */
-    public function __construct(TaskRepository $taskRepository, PaginatorInterface $paginator, WalletService $walletService, CategoryServiceInterface $categoryService)
+    public function __construct(TransactionRepository $taskRepository, PaginatorInterface $paginator, WalletService $walletService, CategoryServiceInterface $categoryService)
     {
         $this->taskRepository = $taskRepository;
         $this->paginator = $paginator;
@@ -69,17 +69,17 @@ class TaskService implements TaskServiceInterface
         return $this->paginator->paginate(
             $this->taskRepository->queryNotAll($filters),
             $page,
-            TaskRepository::PAGINATOR_ITEMS_PER_PAGE
+            TransactionRepository::PAGINATOR_ITEMS_PER_PAGE
         );
     }
 
     /**
      * Save entity.
      *
-     * @param Task       $task                      Task entity
-     * @param float|null $originalTransactionAmount Original Transaction Amount
+     * @param Transaction $task                      Transaction entity
+     * @param float|null  $originalTransactionAmount Original Transaction Amount
      */
-    public function save(Task $task, ?float $originalTransactionAmount = null): void
+    public function save(Transaction $task, ?float $originalTransactionAmount = null): void
     {
         $this->walletService->updateBalance($task->getWallet(), $task->getAmount());
         $balance = $task->getWallet()->getBalance();
@@ -94,9 +94,9 @@ class TaskService implements TaskServiceInterface
     /**
      * Delete entity.
      *
-     * @param Task $task Task entity
+     * @param Transaction $task Transaction entity
      */
-    public function delete(Task $task): void
+    public function delete(Transaction $task): void
     {
         $this->taskRepository->delete($task);
     }

@@ -70,7 +70,7 @@ class Category
     /**
      * ArrayCollection.
      */
-    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Task::class, fetch: 'EXTRA_LAZY')]
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Transaction::class, fetch: 'EXTRA_LAZY')]
     private Collection $transactions;
 
     /**

@@ -7,7 +7,7 @@ namespace App\Service;
 
 use App\Entity\Wallet;
 use App\Repository\WalletRepository;
-use App\Repository\TaskRepository;
+use App\Repository\TransactionRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -29,18 +29,18 @@ class WalletService implements WalletServiceInterface
     private WalletRepository $walletRepository;
 
     /**
-     * Task repository.
+     * Transaction repository.
      */
-    private TaskRepository $taskRepository;
+    private TransactionRepository $taskRepository;
 
     /**
      * Constructor.
      *
-     * @param WalletRepository   $walletRepository Wallet repository
-     * @param PaginatorInterface $paginator        Paginator
-     * @param TaskRepository     $taskRepository   Task repository
+     * @param WalletRepository      $walletRepository Wallet repository
+     * @param PaginatorInterface    $paginator        Paginator
+     * @param TransactionRepository $taskRepository   Transaction repository
      */
-    public function __construct(WalletRepository $walletRepository, PaginatorInterface $paginator, TaskRepository $taskRepository)
+    public function __construct(WalletRepository $walletRepository, PaginatorInterface $paginator, TransactionRepository $taskRepository)
     {
         $this->walletRepository = $walletRepository;
         $this->paginator = $paginator;
@@ -59,7 +59,7 @@ class WalletService implements WalletServiceInterface
         return $this->paginator->paginate(
             $this->walletRepository->queryAll(),
             $page,
-            TaskRepository::PAGINATOR_ITEMS_PER_PAGE
+            TransactionRepository::PAGINATOR_ITEMS_PER_PAGE
         );
     }
 

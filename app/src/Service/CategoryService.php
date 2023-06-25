@@ -7,7 +7,7 @@ namespace App\Service;
 
 use App\Entity\Category;
 use App\Repository\CategoryRepository;
-use App\Repository\TaskRepository;
+use App\Repository\TransactionRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -29,18 +29,18 @@ class CategoryService implements CategoryServiceInterface
     private CategoryRepository $categoryRepository;
 
     /**
-     * Task repository.
+     * Transaction repository.
      */
-    private TaskRepository $taskRepository;
+    private TransactionRepository $taskRepository;
 
     /**
      * Constructor.
      *
-     * @param CategoryRepository $categoryRepository Category repository
-     * @param PaginatorInterface $paginator          Paginator
-     * @param TaskRepository     $taskRepository     Task repository
+     * @param CategoryRepository    $categoryRepository Category repository
+     * @param PaginatorInterface    $paginator          Paginator
+     * @param TransactionRepository $taskRepository     Transaction repository
      */
-    public function __construct(CategoryRepository $categoryRepository, PaginatorInterface $paginator, TaskRepository $taskRepository)
+    public function __construct(CategoryRepository $categoryRepository, PaginatorInterface $paginator, TransactionRepository $taskRepository)
     {
         $this->categoryRepository = $categoryRepository;
         $this->paginator = $paginator;
@@ -59,7 +59,7 @@ class CategoryService implements CategoryServiceInterface
         return $this->paginator->paginate(
             $this->categoryRepository->queryAll(),
             $page,
-            TaskRepository::PAGINATOR_ITEMS_PER_PAGE
+            TransactionRepository::PAGINATOR_ITEMS_PER_PAGE
         );
     }
 

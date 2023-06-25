@@ -1,15 +1,15 @@
 <?php
 /**
- * Task controller.
+ * Transaction controller.
  */
 
 namespace App\Controller;
 
-use App\Entity\Task;
+use App\Entity\Transaction;
 use App\Entity\Wallet;
-use App\Form\Type\TaskType;
+use App\Form\Type\TransactionType;
 use App\Repository\WalletRepository;
-use App\Service\TaskServiceInterface;
+use App\Service\TransactionServiceInterface;
 use App\Service\WalletService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -19,15 +19,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Class TaskController.
+ * Class TransactionController.
  */
 #[Route('/transaction')]
-class TaskController extends AbstractController
+class TransactionController extends AbstractController
 {
     /**
-     * Task service.
+     * Transaction service.
      */
-    private TaskServiceInterface $taskService;
+    private TransactionServiceInterface $taskService;
 
     /**
      * Translator.
@@ -42,11 +42,11 @@ class TaskController extends AbstractController
     /**
      * Constructor.
      *
-     * @param TaskServiceInterface $taskService      Task service
-     * @param TranslatorInterface  $translator       Translator
-     * @param WalletRepository     $walletRepository Wallet Repository
+     * @param TransactionServiceInterface $taskService      Transaction service
+     * @param TranslatorInterface         $translator       Translator
+     * @param WalletRepository            $walletRepository Wallet Repository
      */
-    public function __construct(TaskServiceInterface $taskService, TranslatorInterface $translator, WalletRepository $walletRepository)
+    public function __construct(TransactionServiceInterface $taskService, TranslatorInterface $translator, WalletRepository $walletRepository)
     {
         $this->taskService = $taskService;
         $this->translator = $translator;
@@ -84,7 +84,7 @@ class TaskController extends AbstractController
     #[Route('/create/{wallet?}', name: 'transaction_create', methods: 'GET|POST')]
     public function create(Request $request, WalletService $walletService, Wallet $wallet = null): Response
     {
-        $task = new Task();
+        $task = new Transaction();
 
         if (null !== $wallet) {
             $walletEntity = $this->walletRepository->find($wallet);
@@ -94,7 +94,7 @@ class TaskController extends AbstractController
         }
 
         $form = $this->createForm(
-            TaskType::class,
+            TransactionType::class,
             $task,
             [
                 'action' => $this->generateUrl('transaction_create'),
@@ -105,7 +105,7 @@ class TaskController extends AbstractController
         $referer = $request->headers->get('referer');
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Now that the form is submitted and valid, the Task has a Wallet associated
+            // Now that the form is submitted and valid, the Transaction has a Wallet associated
             if (!$walletService->canAcceptTransaction($task->getWallet(), $task->getAmount())) {
                 $this->addFlash(
                     'warning',
@@ -139,16 +139,16 @@ class TaskController extends AbstractController
      * Edit action.
      *
      * @param Request       $request       HTTP request
-     * @param Task          $task          Task entity
+     * @param Transaction   $task          Transaction entity
      * @param WalletService $walletService WalletService
      *
      * @return Response HTTP response
      */
     #[Route('/{id}/edit', name: 'transaction_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
-    public function edit(Request $request, Task $task, WalletService $walletService): Response
+    public function edit(Request $request, Transaction $task, WalletService $walletService): Response
     {
         $form = $this->createForm(
-            TaskType::class,
+            TransactionType::class,
             $task,
             [
                 'method' => 'PUT',
@@ -194,13 +194,13 @@ class TaskController extends AbstractController
      * Delete action.
      *
      * @param Request       $request       HTTP request
-     * @param Task          $task          Task entity
+     * @param Transaction   $task          Transaction entity
      * @param WalletService $walletService Wallet Service
      *
      * @return Response HTTP response
      */
     #[Route('/{id}/delete', name: 'transaction_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
-    public function delete(Request $request, Task $task, WalletService $walletService): Response
+    public function delete(Request $request, Transaction $task, WalletService $walletService): Response
     {
         $form = $this->createForm(FormType::class, $task, [
             'method' => 'DELETE',
